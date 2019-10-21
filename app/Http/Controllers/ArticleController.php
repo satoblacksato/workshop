@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use Illuminate\Http\Request;
-
+use App\User;
+use App\Http\Requests\ArticleRequest;
 class ArticleController extends Controller
 {
     /**
@@ -14,7 +15,13 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        return view('articles.index');
+        return view('articles.index')->with(
+            [
+'articles'=>Article::with('user')
+->where('name','like',"%".request()->get('filter')."%")
+                         ->paginate(1)
+            ]
+        );
     }
 
     /**
@@ -24,7 +31,10 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        //
+
+         return view('articles.create')->with([
+            'users'=>User::pluck('name','id')->toArray()
+         ]);
     }
 
     /**
@@ -33,9 +43,10 @@ class ArticleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ArticleRequest $request)
     {
-        //
+        Article::create($request->validated());
+        return redirect()->route('articles.index');
     }
 
     /**
@@ -46,7 +57,9 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        //
+         return view('articles.show')->with([
+            'article'=>$article
+         ]);
     }
 
     /**
@@ -57,7 +70,10 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        //
+         return view('articles.edit')->with([
+            'article'=>$article,
+            'users'=>User::pluck('name','id')->toArray()
+         ]);
     }
 
     /**
@@ -67,9 +83,11 @@ class ArticleController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Article $article)
+    public function update(ArticleRequest $request, Article $article)
     {
-        //
+        $article->fill($request->validated());
+        $article->save();
+        return redirect()->route('articles.index');
     }
 
     /**
@@ -80,6 +98,7 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        //
+       $article->delete();
+       return redirect()->route('articles.index');
     }
 }
