@@ -6,8 +6,14 @@ use App\Article;
 use Illuminate\Http\Request;
 use App\User;
 use App\Http\Requests\ArticleRequest;
+use Cache;
 class ArticleController extends Controller
 {
+    
+    public function __construct(){
+        $this->allowfunctions('article',true);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,6 +21,10 @@ class ArticleController extends Controller
      */
     public function index()
     {
+        event(new \App\Events\ArticleEvent(
+           'Ingresa a ver artículos'
+        ));
+
         return view('articles.index')->with(
             [
 'articles'=>Article::with('user')
@@ -33,7 +43,11 @@ class ArticleController extends Controller
     {
 
          return view('articles.create')->with([
-            'users'=>User::pluck('name','id')->toArray()
+            'users'=>
+                    Cache::remember('user_cmb',20,function(){
+                        User::pluck('name','id')->toArray();
+                    })
+               
          ]);
     }
 

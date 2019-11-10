@@ -52,22 +52,27 @@
                             @endif
                         @else
 
-
+                            @can('test')
                             <li class="nav-item">
                                 <a class="nav-link" href="{{route('test')}}">
                                     TEST
                                 </a>
                             </li>
+                            @endcan
+                            @can('horario')
                              <li class="nav-item">
                                 <a class="nav-link" href="{{route('horario')}}">
                                     HORARIO
                                 </a>
                             </li>
+                            @endcan
+                            @can('article-index')
                              <li class="nav-item">
                                 <a class="nav-link" href="{{route('articles.index')}}">
                                     ARTICULOS
                                 </a>
                             </li>
+                            @endcan
                         
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -97,4 +102,19 @@
         </main>
     </div>
 </body>
+<script src="https://js.pusher.com/5.0/pusher.min.js"></script>
+<script type="text/javascript">
+   window.onload=function(){
+        Pusher.logToConsole = true;
+        var pusher = new Pusher('f70d41239f11bc28fef4', {
+          cluster: 'mt1',
+          forceTLS: true
+        });
+        var channel = pusher.subscribe('workshop');
+        channel.bind('articles', function(data) {
+          console.log(data);
+        });
+
+    };
+</script>
 </html>

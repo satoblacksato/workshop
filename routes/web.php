@@ -47,11 +47,28 @@ Route::group(['middleware'=>'auth','prefix'=>'proceso'],function(){
 
 	Route::get('/test',function(){
 		return "Hola Mundo";
-	})->name('test')->middleware('password.confirm');
+	})->name('test')->middleware(['password.confirm','can:test']);
     
 
 	Route::get('/horario',function(){
 		return Carbon\Carbon::now();
-	})->name('horario');
+	})->name('horario')->middleware('can:horario');
 
+});
+
+
+Route::get('/jobs/{num}',function($num=8){
+  \App\Jobs\SumatoriaJob::dispatch($num)->onQueue('sumar');
+  return "job ok";
+});
+
+Route::get('slack',function(){
+	try{
+		//throw new Exception("Error de datos");
+		$r=1/0;
+
+	}catch(Exception $ex){
+		auth()->user()->notify(new \App\Notifications\SlackErrors($ex->getMessage()));
+	}
+	
 });

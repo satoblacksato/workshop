@@ -43,4 +43,16 @@ class User extends Authenticatable
     public function articles(){
         return $this->hasMany(Article::class,'user_id','id');
     }
+
+
+      /**
+     * Route notifications for the Slack channel.
+     *
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return string
+     */
+    public function routeNotificationForSlack($notification)
+    {
+        return 'https://hooks.slack.com/services/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';
+    }
 }
