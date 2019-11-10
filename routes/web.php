@@ -16,9 +16,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/test',function(){
-	return "Hola Mundo";
-});
+
 
 Route::get('/test-p/{num1}/{num2}',function($num1,$num2){
 	return $num1+$num2;
@@ -44,4 +42,16 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 
 Route::group(['middleware'=>'auth','prefix'=>'proceso'],function(){
-	Route::resource('articles','ArticleController');});
+
+	Route::resource('articles','ArticleController');
+
+	Route::get('/test',function(){
+		return "Hola Mundo";
+	})->name('test')->middleware('password.confirm');
+    
+
+	Route::get('/horario',function(){
+		return Carbon\Carbon::now();
+	})->name('horario');
+
+});
